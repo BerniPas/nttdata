@@ -34,7 +34,10 @@ class Navegacion extends Component{
                                 <Link to='/admin' class="nav-link" >Admin</Link>
                             </li>
                             <li className="nav-item">
-                                <Link to='/usuarios' class="nav-link" >Usuarios</Link>
+                                <Link to='/usuarios' class="nav-link">Usuarios</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to='/sucursales' class="nav-link">Sucursales</Link>
                             </li>
                         </ul>                                          
                     </div>
