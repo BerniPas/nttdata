@@ -1,5 +1,8 @@
 
 
+
+
+
 const Admin = () => {
 
     return (
@@ -8,9 +11,6 @@ const Admin = () => {
                 Bienvenido Administrador
             </h1>
 
-            <div className="text-center mt-5 mb-5">
-                
-            </div>
         </>
     )
 }
