@@ -2,11 +2,12 @@
   "name": "nodeejemplo",
   "version": "1.0.0",
   "type": "module",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.mjs",
-    "start": "nodemon server.mjs"
+    "start": "nodemon server.mjs",
+    "servidor": "nodemon servidor.mjs"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +17,9 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": "16.x"
   },
   "keywords": [],
   "description": ""
