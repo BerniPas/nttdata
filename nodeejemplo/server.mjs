@@ -4,6 +4,7 @@ import express from 'express'; //ES6= ES Modules
 import dotenv from 'dotenv';
 dotenv.config();
 import { middleware } from './middleware/data.mjs';
+import hbs from 'hbs';
 
 const app = express();
 const PORT = process.env.PORT || 9000;
@@ -22,11 +23,17 @@ const middleware = (req, res, next) => {
     next();
 } */
 
+//config de hbs: motore de plantillas
+app.set('view engine', 'hbs');
+app.set('views', './views');
+hbs.registerPartials('./views/partials');
+
+
 //usa el middleware
 app.use(middleware);//global: todas las rutas
 app.use(express.json());//middleware para parsear el body a json
 app.use(express.urlencoded({ extended: true }));//middleware para parsear el body a json
-app.use(express.static('public'));//middleware para servir archivos estáticos
+app.use(express.static('./public'));//middleware para servir archivos estáticos
 
 app.get('/data', middleware, (req, res) => {
 
@@ -37,6 +44,45 @@ app.get('/data', middleware, (req, res) => {
     console.log(process.env.PORT);
 
     res.send('<h1>Hello World</h1>');
+});
+
+app.get('/hbs', (req, res) => {
+
+    //envio datos a la vista
+
+    const curso = {
+        name: 'Node',
+        title: 'HBS',
+        description: 'Handlebars'
+    }
+
+    //usamos el each para mostrar datos en hbs
+    const data = [{
+        name: 'Node',
+        title: 'HBS',
+        description: 'Handlebars'
+    },
+    {
+        name: 'Express',
+        title: 'HBS',
+        description: 'Handlebars'
+    },
+    {
+        name: 'MongoDB',
+        title: 'HBS',
+        description: 'Handlebars'
+    },
+    {
+        name: 'React',
+        title: 'HBS',
+        description: 'Handlebars'
+    }]
+    
+    res.render('index', {
+        curso,
+        data
+    });
+
 });
 
 
