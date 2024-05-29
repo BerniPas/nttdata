@@ -1,10 +1,15 @@
 import { request, response} from 'express';
 import User from '../database/userModel.mjs';
+import bycrpt from 'bcrypt';
 
-const responderUser = (req = request, res =response) => {
+const getUsers = (req = request, res =response) => {
+
+    const usuarios = User.find({});
+
     res.json({
-        user: 'User'
+        user: usuarios
     });
+
 }
 
 const createUser = async (req = request, res = response) => {
@@ -19,17 +24,41 @@ const createUser = async (req = request, res = response) => {
         password:  password   
     }
 
-    console.log(user);
+    const userExist = User.findOne({email: email});
 
-    const newUser = new User(user);
+    if(userExist){
+        return res.json({
+            error: "Usuario ya existe"
+        });
+    }
 
-    await newUser.save();
+    
+    try {
+        
+        //creamos una sal para la encriptación
+        const salt = await bycrpt.genSalt(10);
+        console.log(salt);
+    
+        //encriptamos la contraseña
+        user.password = await bycrpt.hash(user.password, salt);  
+        
+        console.log(user.password);
 
-    res.json({
-        user: "Usuario Creado"
-    });
+        const newUser = new User(user);
+        
+        await newUser.save();
 
+        return res.json({
+            user: "Usuario Creado"
+        });
 
+    } catch (error) {
+        console.log(error);
+        return res.json({
+            error: "Error en el sitema"
+        });
+    }
+    
 }
 
 const getForm = (req = request, res = response) => {
@@ -50,6 +79,7 @@ const deleteUser = (req = request, res = response) => {
 
 
 export {
+    getUsers,
     getForm,
     createUser,
     updateUser,

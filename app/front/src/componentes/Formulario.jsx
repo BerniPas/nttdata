@@ -1,5 +1,5 @@
 import Form from 'react-bootstrap/Form';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 
 function Formulario() {
@@ -8,31 +8,42 @@ function Formulario() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const URL_BACK = import.meta.env.VITE_URL_BACK_POST;
+
 
     const imprimirDatos = () =>{
 
         console.log(`Datos ingresados en el formulario. ${nombre} - ${email} - ${password}`)
-
+        
         alert(`Datos ingresados en el formulario: ${nombre} - ${email} - ${password}`);
-
+        
         limpiarDatos();
-
+        
     }
-
+    
     function limpiarDatos() {
         setNombre('');
         setEmail('');
         setPassword('');
     }
-
+    
     const crearUsuario = async (e) => {
+        
+        console.log(e);
+
+        console.log(e.target);
+
+        //Captura de datos en JS nativo
+        //const nombre = document.getElementById('nombre').value;
 
         e.preventDefault();
 
-            await axios.post('http://127.0.0.1:8080/user', { nombre, email, password })
+            await axios.post(URL_BACK, { nombre, email, password })
             .then((res) => {
                 console.log(res.data);
             })
+
+        limpiarDatos();
 
     }
 
@@ -50,7 +61,7 @@ function Formulario() {
                         type="text" 
                         placeholder="name"
                         value={nombre}
-                        onChange={(e)=> setNombre(e.target.value)} 
+                        onChange={(e) => setNombre(e.target.value)}                     
                         />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="email">

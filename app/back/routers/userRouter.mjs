@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
 import{
+    getUsers,
     getForm,
     createUser,
     updateUser,
@@ -13,6 +14,7 @@ const router = Router();
     responder a la ruta user
  */
 
+router.get('/', getUsers);
 router.get('/form', getForm);
 router.post('/', createUser);
 router.put('/', updateUser);
