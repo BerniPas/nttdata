@@ -8,18 +8,11 @@ function Formulario() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    useEffect(() => {
-
-        fetch();
-        axios.get()
-
-    })
 
     const imprimirDatos = () =>{
 
         console.log(`Datos ingresados en el formulario. ${nombre} - ${email} - ${password}`)
 
-        //Mostrar datos al user
         alert(`Datos ingresados en el formulario: ${nombre} - ${email} - ${password}`);
 
         limpiarDatos();
@@ -34,17 +27,9 @@ function Formulario() {
 
     const crearUsuario = async (e) => {
 
-        const persona = {
-            nombre: nombre,
-            email: email,
-            password: password
-        }
-
-
         e.preventDefault();
 
-            axios.post('http://127.0.0.1:8080/user', {persona})
-
+            await axios.post('http://127.0.0.1:8080/user', { nombre, email, password })
             .then((res) => {
                 console.log(res.data);
             })
@@ -59,7 +44,7 @@ function Formulario() {
 
         <div className="container">
             <Form className='w-75' onSubmit={crearUsuario}>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+            <Form.Group className="mb-3" controlId="nombre">
                     <Form.Label>Nombre: </Form.Label>
                     <Form.Control 
                         type="text" 
@@ -68,7 +53,7 @@ function Formulario() {
                         onChange={(e)=> setNombre(e.target.value)} 
                         />
                 </Form.Group>
-                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                <Form.Group className="mb-3" controlId="email">
                     <Form.Label>Email: </Form.Label>
                     <Form.Control 
                         type="email" 
@@ -77,7 +62,7 @@ function Formulario() {
                         onChange={(e)=> setEmail(e.target.value)}
                         />
                 </Form.Group>
-                <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                <Form.Group className="mb-3" controlId="password">
                     <Form.Label>Password: </Form.Label>
                     <Form.Control 
                         type="password" 

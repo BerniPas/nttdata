@@ -13,7 +13,6 @@ const createUser = async (req = request, res = response) => {
 
     console.log(req.body);
 
-
     const user = {
         nombre: nombre,
         email: email,
@@ -22,7 +21,7 @@ const createUser = async (req = request, res = response) => {
 
     console.log(user);
 
-    const newUser = new User(req.body);
+    const newUser = new User(user);
 
     await newUser.save();
 

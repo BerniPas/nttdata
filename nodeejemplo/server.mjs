@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 import { middleware } from './middleware/data.mjs';
 import hbs from 'hbs';
+import cors from 'cors';
+import rutasUsuarios from './routers/userRouter.mjs';
 
 const app = express();
 const PORT = process.env.PORT || 9000;
@@ -34,6 +36,16 @@ app.use(middleware);//global: todas las rutas
 app.use(express.json());//middleware para parsear el body a json
 app.use(express.urlencoded({ extended: true }));//middleware para parsear el body a json
 app.use(express.static('./public'));//middleware para servir archivos estáticos
+app.use(cors());//middleware para habilitar cors
+
+
+//usamos las rutas del router
+//app.use('/user', require('./routes/userRouter.mjs'));
+app.use('/user', rutasUsuarios);
+
+
+
+
 
 app.get('/data', middleware, (req, res) => {
 

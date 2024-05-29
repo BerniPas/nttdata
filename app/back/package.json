@@ -2,12 +2,11 @@
   "name": "nodeejemplo",
   "version": "1.0.0",
   "type": "module",
-  "main": "server.js",
+  "main": "server.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.mjs",
-    "start": "nodemon server.mjs",
-    "servidor": "nodemon servidor.mjs"
+    "dev": "nodemon server.mjs",
+    "start": "node server.mjs"
   },
   "author": "",
   "license": "ISC",
