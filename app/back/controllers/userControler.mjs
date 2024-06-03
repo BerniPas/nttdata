@@ -1,20 +1,36 @@
 import { request, response} from 'express';
 import User from '../database/userModel.mjs';
 import bycrpt from 'bcrypt';
+import { validationResult } from 'express-validator';
 
-const getUsers = (req = request, res =response) => {
+const getUsers = async (req = request, res =response) => {
 
-    const usuarios = User.find({});
+    const usuarios = await User.find({});
 
     res.json({
         user: usuarios
     });
+
+   /*  res.redirect('/user/form'); */
 
 }
 
 const createUser = async (req = request, res = response) => {
 
     const { nombre, email, password } = req.body;
+
+    const errores = await validationResult(req);
+
+    if(!errores.isEmpty()){
+
+        console.log(errores.array())
+
+        return res.json({
+            errores: errores.array()
+        });
+
+    }
+    /* console.log(errores); */
 
     console.log(req.body);
 
@@ -24,10 +40,10 @@ const createUser = async (req = request, res = response) => {
         password:  password   
     }
 
-    const userExist = User.findOne({email: email});
+    const userExist = await User.findOne({email: email});
 
     if(userExist){
-        return res.json({
+        return res.status(404).json({
             error: "Usuario ya existe"
         });
     }
@@ -76,6 +92,10 @@ const deleteUser = (req = request, res = response) => {
     });
 }
 
+const loginUser = (req = request, res = response) => {
+    res.render('login');
+}
+
 
 
 export {
@@ -83,6 +103,7 @@ export {
     getForm,
     createUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    loginUser
 }
 

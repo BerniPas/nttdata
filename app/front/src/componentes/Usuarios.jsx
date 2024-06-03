@@ -1,17 +1,45 @@
 import { useState, useEffect } from 'react';
-import reactLogo from '../assets/react.svg'
-import viteLogo from '/vite.svg'
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Table from 'react-bootstrap/Table';
+import Button from 'react-bootstrap/Button';
+import { useNavigate } from "react-router-dom";
+
+
 
 function Usuarios() {
-  const [count, setCount] = useState(0)
 
+  const [usuarios, setUsuarios] = useState([]);
+  
+  const navigate = useNavigate();
+  const URL_GET_USERS = import.meta.env.VITE_URL_GET_USERS;
+  
+  const getUsers = async () => {
+    /* const respuesta = await axios.get(URL_GET_USERS)
+    console.log(respuesta);
+    console.log('======================');
+    console.log(respuesta.data);
+    console.log('======================'); */
+    
+    try {
+      const { data } = await axios.get(URL_GET_USERS)
+      console.log(data);
+      setUsuarios(data.user);
+      
+    } catch (error) {
+      console.log(error);
+    }
+    
+  }
 
+  const redireccion = () =>{
+    navigate("/formulario");
+  }
+  
+  
   useEffect(() => {
-    axios.get('http://localhost:4000/usuarios')
-  }, []);
+    getUsers();
+  },[]);
 
   return (
     <>
@@ -23,47 +51,34 @@ function Usuarios() {
         <thead>
           <tr>
             <th>#</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Username</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Password</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-          </tr>
+            { usuarios.map((user)=>(
+            <tr key={ user._id }>
+              <td>{ user._id }</td>
+              <td>{ user.nombre }</td>
+              <td>{ user.email }</td>
+              <td>{ user.password }</td>
+            </tr>
+            ))
+            }
         </tbody>
       </Table>
 
-
-      <div className='text-center mt-5 mb-5'>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-        <h1>Vite + React</h1>
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-        <p className="read-the-docs">
-          Click on the Vite and React logos to learn  Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas, nihil. Blanditiis illum nemo amet sunt eaque? Reiciendis consequatur architecto nam? Nostrum eum natus atque dolorum repellat reiciendis possimus soluta vero.
-          Lorem ipsum dolor sit amet, consectetur <Link to='/formulario'>Formulario</Link>  elit. Ea repellendus eius maiores est dolorem sapiente ullam libero, ad optio tempora nisi repudiandae, porro vero amet consequuntur sunt molestias, repellat assumenda!
-        </p>
+      <div className='text-center mt-5'>
+        <Button variant="success w-50" onClick={redireccion}>Cargar Users</Button>
       </div>
+
+      <div className='text-center mt-5'>
+        <Link to='/formulario'>
+          <Button variant="primary w-50">Cargar Users</Button>
+        </Link>
+      </div>
+
     </>
   );
 }
