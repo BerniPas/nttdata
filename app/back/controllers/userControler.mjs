@@ -1,7 +1,8 @@
 import { request, response} from 'express';
 import User from '../database/userModel.mjs';
-import bycrpt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import { validationResult } from 'express-validator';
+import jwt from 'jsonwebtoken';
 
 const getUsers = async (req = request, res =response) => {
 
@@ -30,9 +31,6 @@ const createUser = async (req = request, res = response) => {
         });
 
     }
-    /* console.log(errores); */
-
-    console.log(req.body);
 
     const user = {
         nombre: nombre,
@@ -56,9 +54,7 @@ const createUser = async (req = request, res = response) => {
         console.log(salt);
     
         //encriptamos la contraseña
-        user.password = await bycrpt.hash(user.password, salt);  
-        
-        console.log(user.password);
+        user.password = await bcrypt.hash(user.password, salt);  
 
         const newUser = new User(user);
         
@@ -92,8 +88,112 @@ const deleteUser = (req = request, res = response) => {
     });
 }
 
-const loginUser = (req = request, res = response) => {
-    res.render('login');
+const loginUser = async (req = request, res = response) => {
+
+    const { email, password } = req.body;
+
+    //función para validar datos del user
+    const errores = await validationResult(req);
+
+    if(!errores.isEmpty()){
+
+        console.log(errores.array())
+
+        return res.json({
+            errores: errores.array()
+        });
+
+    }
+
+    //validar al user
+    const varlidarUsuario = async (user) => {
+
+        
+        
+        try {
+
+            const userExist = await User.findOne({email: email});
+
+            console.log(userExist);
+
+            if(!userExist){
+                return { 
+                    ok: false,
+                    data: 'Usuario no encontrado'
+                }
+            }
+
+            const match = await bcrypt.compare(user.password, userExist.password); 
+
+            console.log(match);
+
+            if(!match){
+                return { 
+                    ok: false,
+                    data: 'Email o Password incorrectos'
+                }
+            }
+            
+            return { 
+                ok: true, 
+                data: 'Usuario autenticado'
+            }
+
+        } catch (error) {
+            console.log(error);
+            return { 
+                ok: false,
+                data: 'Error en la autenticación'
+            }
+        }
+
+    }
+
+
+    
+    const tokenUser = async () =>{
+        
+        const { email, password } = req.body;
+        
+        
+        try {
+            
+            const validar = await varlidarUsuario({email, password});
+            
+            if(validar.ok){
+    
+                const user = await User.findOne({email: email});
+                //const user = await validar.userExist;
+    
+                const payload = {
+                    user: {
+                        id: user.id, 
+                        nombre: user.nombre
+                }
+                }
+    
+                const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 });
+    
+                return res.status('200').json({
+                    token: token
+                });
+                
+            }
+            
+            
+        } catch (error) {
+            console.log(error);
+            res.json({
+                error: 'Error en el sistema'
+            });
+        }       
+        
+        //guardar la session en ma database
+        
+    }
+    
+    tokenUser();
+
 }
 
 
