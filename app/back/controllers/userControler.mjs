@@ -3,6 +3,7 @@ import User from '../database/userModel.mjs';
 import bcrypt from 'bcrypt';
 import { validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
+import session from 'express-session';
 
 const getUsers = async (req = request, res =response) => {
 
@@ -50,7 +51,7 @@ const createUser = async (req = request, res = response) => {
     try {
         
         //creamos una sal para la encriptación
-        const salt = await bycrpt.genSalt(10);
+        const salt = await bcrypt.genSalt(10);
         console.log(salt);
     
         //encriptamos la contraseña
@@ -82,10 +83,29 @@ const updateUser = (req = request, res = response) => {
         user: 'User'    
     });
 }
-const deleteUser = (req = request, res = response) => {
-    res.json({
-        user: 'User'    
-    });
+
+const deleteUser = async (req = request, res = response) => {
+
+    const userId = req.params.userId;
+
+    try {
+        
+        const deletUser = await User.findByIdAndDelete(userId);
+
+        if(!deletUser){
+            return res.status(404).json({
+                error: 'Usuario no encontrado'
+            });
+        } else{
+            res.status(200).json({ 
+                success: 'Usuario eliminado correctamente' 
+            });
+        }
+
+    } catch (error) {
+        console.log(error);
+    }
+
 }
 
 const loginUser = async (req = request, res = response) => {
@@ -173,9 +193,20 @@ const loginUser = async (req = request, res = response) => {
                 }
     
                 const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 });
+
+                req.session.user = {
+                    id: user.id,
+                    nombre: user.nombre,
+                    email: user.email,
+                    token: token
+                }
+
+                await req.session.save();
     
                 return res.status('200').json({
-                    token: token
+                    mensaje: 'Usuario autenticado',
+                    user,
+                    token
                 });
                 
             }

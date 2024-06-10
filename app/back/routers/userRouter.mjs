@@ -31,8 +31,14 @@ router.post('/login', [
     check('password', 'El password es obligatorio').isLength({min: 6}),
 ], loginUser);
 
-router.put('/', updateUser);
-router.delete('/', deleteUser);
+router.put('/update/:userId', [
+    check('nombre', 'El nombre es obligatorio').isString().isLength({min: 3}),
+    check('email', 'El email es obligatorio').isEmail(),
+    check('password', 'El password es obligatorio').isLength({min: 6}),
+] , updateUser);
+
+
+router.delete('/delete/:userId', deleteUser);
 
 
 export default router;
